@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Proposal 💕</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Pacifico&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 30%, #f48fb1 60%, #f06292 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Floating hearts background */
+  .hearts-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .floating-heart {
+    position: absolute;
+    font-size: 20px;
+    animation: floatUp linear infinite;
+    opacity: 0.3;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.3; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+  }
+
+  .page {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .page.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    padding: 40px 35px;
+    box-shadow: 0 20px 60px rgba(233, 30, 99, 0.15), 0 0 0 1px rgba(255,255,255,0.3);
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, #f48fb1, #ce93d8, #f48fb1);
+    border-radius: 32px;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  .cat-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 20px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  .main-title {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #4a1942;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .main-title .flower {
+    color: #e91e63;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: #7b4f7a;
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+
+  .btn-yes {
+    background: linear-gradient(135deg, #f48fb1, #f06292);
+    color: white;
+    border: none;
+    padding: 16px 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(240, 98, 146, 0.4);
+    margin: 10px;
+  }
+
+  .btn-yes:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 35px rgba(240, 98, 146, 0.5);
+  }
+
+  .btn-no {
+    background: linear-gradient(135deg, #e0e0e0, #bdbdbd);
+    color: #666;
+    border: none;
+    padding: 16px 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    margin: 10px;
+    position: relative;
+  }
+
+  .btn-next {
+    background: linear-gradient(135deg, #f48fb1, #f06292);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(240, 98, 146, 0.4);
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-next:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(240, 98, 146, 0.5);
+  }
+
+  .btn-full {
+    width: 100%;
+    padding: 18px;
+    font-size: 1.15rem;
+    margin-top: 25px;
+  }
+
+  /* Page 2 - YES reaction */
+  .reaction-emoji {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: bounce 1s ease infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  .reaction-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #4a1942;
+    margin-bottom: 10px;
+  }
+
+  .reaction-sub {
+    font-size: 1.1rem;
+    color: #7b4f7a;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  /* Page 3 - Date picker */
+  .calendar-icon {
+    font-size: 4rem;
+    margin-bottom: 5px;
+  }
+
+  .paw-prints {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    letter-spacing: 5px;
+  }
+
+  .form-label {
+    display: block;
+    text-align: left;
+    font-weight: 700;
+    color: #4a1942;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    margin-top: 20px;
+  }
+
+  .form-label .emoji {
+    margin-left: 5px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #f8bbd0;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-family: 'Quicksand', sans-serif;
+    color: #4a1942;
+    background: white;
+    transition: border-color 0.3s;
+    outline: none;
+  }
+
+  .form-input:focus {
+    border-color: #f06292;
+    box-shadow: 0 0 0 3px rgba(240, 98, 146, 0.15);
+  }
+
+  select.form-input {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23f06292' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+  }
+
+  /* Page 4 - Food */
+  .food-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  .food-item {
+    background: #fce4ec;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    padding: 15px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .food-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(240, 98, 146, 0.2);
+  }
+
+  .food-item.selected {
+    border-color: #f06292;
+    background: #f8bbd0;
+    box-shadow: 0 5px 20px rgba(240, 98, 146, 0.3);
+  }
+
+  .food-item .food-emoji {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .food-item .food-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a1942;
+  }
+
+  .custom-input-wrap {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .custom-input-wrap input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #f8bbd0;
+    border-radius: 15px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .custom-input-wrap input:focus {
+    border-color: #f06292;
+  }
+
+  .custom-input-wrap button {
+    background: #f06292;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 15px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .custom-input-wrap button:hover {
+    background: #e91e63;
+  }
+
+  .selected-food-display {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background: #fce4ec;
+    border-radius: 15px;
+    font-weight: 600;
+    color: #4a1942;
+    display: none;
+  }
+
+  .selected-food-display.show {
+    display: block;
+    animation: fadeIn 0.4s ease;
+  }
+
+  /* Page 5 - Final */
+  .shrek-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+
+  .final-message {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4a1942;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+
+  .heartfelt-message {
+    font-size: 1rem;
+    color: #7b4f7a;
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 10px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+    border-radius: 20px;
+    border-left: 4px solid #f06292;
+  }
+
+  .ps-text {
+    font-size: 0.9rem;
+    color: #9e7b9d;
+    font-style: italic;
+    margin-top: 10px;
+  }
+
+  .btn-bye {
+    background: linear-gradient(135deg, #66bb6a, #43a047);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(67, 160, 71, 0.4);
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-bye:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(67, 160, 71, 0.5);
+  }
+
+  .whatsapp-status {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #43a047;
+    font-weight: 600;
+    display: none;
+  }
+
+  /* Confetti */
+  .confetti-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .card {
+      padding: 30px 20px;
+      margin: 10px;
+    }
+    .main-title {
+      font-size: 1.5rem;
+    }
+    .food-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .reaction-text {
+      font-size: 1.4rem;
+    }
+    .final-message {
+      font-size: 1.2rem;
+    }
+  }
+
+  /* No button escape animation */
+  .btn-no.escaping {
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .built-on-replit {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: #bbb;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .built-on-replit span {
+    background: #f5f5f5;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #eee;
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating Hearts Background -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- Confetti Container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- PAGE 1: Will you go on a date with me? -->
+<div class="page active" id="page1">
+  <div class="card">
+    <img src="https://i.imgur.com/JqVwB5b.jpg" alt="Cute cat" class="cat-img"
+         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22><rect fill=%22%23f8bbd0%22 width=%22150%22 height=%22150%22 rx=%2220%22/><text x=%2275%22 y=%2285%22 text-anchor=%22middle%22 font-size=%2260%22>🐱</text></svg>'">
+    <h1 class="main-title"><span class="flower">🌸</span> Will you go on a date with me? <span class="flower">🌸</span></h1>
+    <div style="margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+      <button class="btn-yes" onclick="goToPage(2)">YES 💕</button>
+      <button class="btn-no" id="noBtn" onclick="escapeNo()">NO</button>
+    </div>
+    <div class="built-on-replit"><span>Built by Moshe Ngobeni (0766820030)
+        BCom (Coputer Science & Information Systems) </span></div>
+  </div>
+</div>
+
+<!-- PAGE 2: YES Reaction -->
+<div class="page" id="page2">
+  <div class="card">
+    <div class="reaction-emoji">😭</div>
+    <h2 class="reaction-text">WAIT YOU ACTUALLY SAID YES?? 😭</h2>
+    <p class="reaction-sub">I was so ready for you to say no 🥺💔</p>
+    <p class="reaction-sub" style="margin-top: 5px;">Like... I had a whole speech prepared and everything 😅</p>
+    <button class="btn-next" onclick="goToPage(3)">Oka okay →</button>
+  </div>
+</div>
+
+<!-- PAGE 3: Date Picker -->
+<div class="page" id="page3">
+  <div class="card">
+    <div class="calendar-icon">📅</div>
+    <div class="paw-prints">🐾</div>
+    <h2 class="main-title">So… when are you free?</h2>
+
+    <label class="form-label">Pick a Day <span class="emoji">✨</span></label>
+    <input type="date" class="form-input" id="dateInput">
+
+    <label class="form-label">What Time? <span class="emoji">⏰</span></label>
+    <select class="form-input" id="timeInput">
+      <option value="">Select a time...</option>
+      <option value="5:00 PM">5:00 PM — we eating with the retirees</option>
+      <option value="6:00 PM">6:00 PM — this is the right answer tbh</option>
+      <option value="7:00 PM">7:00 PM — you're making me hungry already</option>
+      <option value="8:00 PM">8:00 PM — we eating dinner or breakfast?</option>
+    </select>
+
+    <button class="btn-next btn-full" onclick="goToPage(4)">Set the date! 💕</button>
+  </div>
+</div>
+
+<!-- PAGE 4: Food Selection -->
+<div class="page" id="page4">
+  <div class="card">
+    <h2 class="main-title">What are we feeling? 🍜✨</h2>
+
+    <div class="food-grid">
+      <div class="food-item" onclick="selectFood(this, 'Pizza 🍕')">
+        <span class="food-emoji"></span>
+        <span class="food-name">Pizza</span>
+      </div>
+      <div class="food-item" onclick="selectFood(this, 'KFC 🍗')">
+        <span class="food-emoji">🍗</span>
+        <span class="food-name">KFC</span>
+      </div>
+      <div class="food-item" onclick="selectFood(this, 'Sushi 🍣')">
+        <span class="food-emoji">🍣</span>
+        <span class="food-name">Sushi</span>
+      </div>
+      <div class="food-item" onclick="selectFood(this, 'Burgers 🍔')">
+        <span class="food-emoji">🍔</span>
+        <span class="food-name">Burgers</span>
+      </div>
+      <div class="food-item" onclick="selectFood(this, 'Pasta ')">
+        <span class="food-emoji">🍝</span>
+        <span class="food-name">Pasta</span>
+      </div>
+      <div class="food-item" onclick="selectFood(this, 'Tacos 🌮')">
+        <span class="food-emoji">🌮</span>
+        <span class="food-name">Tacos</span>
+      </div>
+      <div class="food-item" onclick="selectFood(this, 'Ramen 🍜')">
+        <span class="food-emoji">🍜</span>
+        <span class="food-name">Ramen</span>
+      </div>
+    </div>
+
+    <div class="custom-input-wrap">
+      <input type="text" id="customFood" placeholder="Or type a restaurant...">
+      <button onclick="selectCustomFood()">Add</button>
+    </div>
+
+    <div class="selected-food-display" id="selectedFoodDisplay">
+      Selected: <span id="selectedFoodName"></span>
+    </div>
+
+    <button class="btn-next btn-full" id="foodNextBtn" style="display:none;" onclick="goToPage(5)">this one! →</button>
+  </div>
+</div>
+
+<!-- PAGE 5: Final Message -->
+<div class="page" id="page5">
+  <div class="card">
+    <img src="https://i.imgur.com/8QJTLwD.jpg" alt="Shrek" class="shrek-img"
+         onerror="this.style.display='none'">
+    <h2 class="final-message" id="finalMessage"></h2>
+    <div class="heartfelt-message" id="heartfeltMsg"></div>
+    <p class="ps-text">P.S. normal people text. I made a website during lunch. for you. big deal. 😤</p>
+    <button class="btn-bye" onclick="sendWhatsApp()">Bye bye! 💌</button>
+    <div class="whatsapp-status" id="waStatus">✅ Messages sent! See you soon! 💕</div>
+  </div>
+</div>
+
+<script>
+  // Store date details
+  let dateDetails = {
+    date: '',
+    time: '',
+    food: ''
+  };
+
+  // Create floating hearts
+  function createHearts() {
+    const container = document.getElementById('heartsBg');
+    const hearts = ['💕', '', '💖', '🌸', '✨', '💘', ''];
+    for (let i = 0; i < 20; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'floating-heart';
+      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (8 + Math.random() * 12) + 's';
+      heart.style.animationDelay = (Math.random() * 10) + 's';
+      heart.style.fontSize = (15 + Math.random() * 20) + 'px';
+      container.appendChild(heart);
+    }
+  }
+  createHearts();
+
+  // Page navigation
+  function goToPage(pageNum) {
+    // Save data before moving
+    if (pageNum === 4) {
+      dateDetails.date = document.getElementById('dateInput').value;
+      dateDetails.time = document.getElementById('timeInput').value;
+      if (!dateDetails.date || !dateDetails.time) {
+        alert('Please pick both a date and a time! 📅⏰');
+        return;
+      }
+    }
+
+    if (pageNum === 5) {
+      if (!dateDetails.food) {
+        alert('Please select a food option! 🍕');
+        return;
+      }
+      buildFinalPage();
+    }
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page' + pageNum).classList.add('active');
+
+    if (pageNum === 2) launchConfetti();
+  }
+
+  // NO button escape
+  let noClickCount = 0;
+  const noMessages = ['NO', 'Are you sure?', 'Really??', 'Think again!', 'Please? 🥺', 'I\'ll cry 😭', 'Last chance!', '💔'];
+
+  function escapeNo() {
+    const btn = document.getElementById('noBtn');
+    noClickCount++;
+
+    btn.classList.add('escaping');
+
+    const card = btn.closest('.card');
+    const cardRect = card.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    // Calculate random position within the card
+    const maxX = cardRect.width - btnRect.width - 20;
+    const maxY = cardRect.height - btnRect.height - 20;
+
+    const randomX = (Math.random() - 0.5) * maxX;
+    const randomY = (Math.random() - 0.5) * maxY;
+
+    btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    btn.textContent = noMessages[Math.min(noClickCount, noMessages.length - 1)];
+
+    // Make it smaller each time
+    const scale = Math.max(0.5, 1 - noClickCount * 0.08);
+    btn.style.transform += ` scale(${scale})`;
+
+    if (noClickCount >= 7) {
+      btn.style.display = 'none';
+    }
+  }
+
+  // Also make NO button move on hover (desktop)
+  document.getElementById('noBtn').addEventListener('mouseover', function() {
+    if (noClickCount < 3) {
+      escapeNo();
+    }
+  });
+
+  // Food selection
+  function selectFood(el, foodName) {
+    document.querySelectorAll('.food-item').forEach(item => item.classList.remove('selected'));
+    el.classList.add('selected');
+    dateDetails.food = foodName;
+    document.getElementById('selectedFoodName').textContent = foodName;
+    document.getElementById('selectedFoodDisplay').classList.add('show');
+    document.getElementById('foodNextBtn').style.display = 'inline-flex';
+    document.getElementById('customFood').value = '';
+  }
+
+  function selectCustomFood() {
+    const input = document.getElementById('customFood');
+    if (input.value.trim()) {
+      document.querySelectorAll('.food-item').forEach(item => item.classList.remove('selected'));
+      dateDetails.food = input.value.trim();
+      document.getElementById('selectedFoodName').textContent = dateDetails.food;
+      document.getElementById('selectedFoodDisplay').classList.add('show');
+      document.getElementById('foodNextBtn').style.display = 'inline-flex';
+    }
+  }
+
+  // Build final page
+  function buildFinalPage() {
+    const formattedDate = formatDate(dateDetails.date);
+    const msg = `Glad you didn't say no. Be ready by ${formattedDate} at ${dateDetails.time}, I'm coming to get you 🚗💨`;
+    document.getElementById('finalMessage').textContent = msg;
+
+    const heartfelt = `Every moment without you feels like a Monday morning — long, boring, and in desperate need of coffee. But with you? Every second feels like a Friday night. You make the ordinary extraordinary, and I just really, really want to take you out, eat ${dateDetails.food.toLowerCase()}, and pretend I'm not completely obsessed with you. (I am though. Completely. 💕)`;
+    document.getElementById('heartfeltMsg').textContent = heartfelt;
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return d.toLocaleDateString('en-US', options);
+  }
+
+  // Send WhatsApp
+  function sendWhatsApp() {
+    const formattedDate = formatDate(dateDetails.date);
+    const message = `Hey! 💕 Our date is confirmed!\n\n📅 Date: ${formattedDate}\n⏰ Time: ${dateDetails.time}\n️ Food: ${dateDetails.food}\n\nCan't wait! 🚗💨`;
+
+    const encodedMsg = encodeURIComponent(message);
+
+    // Open WhatsApp for her
+    window.open(`https://wa.me/94763674142?text=${encodedMsg}`, '_blank');
+
+    // Open WhatsApp for him after a short delay
+    setTimeout(() => {
+      window.open(`https://wa.me/94766820030?text=${encodedMsg}`, '_blank');
+    }, 1500);
+
+    document.getElementById('waStatus').style.display = 'block';
+    launchConfetti();
+  }
+
+  // Confetti
+  function launchConfetti() {
+    const container = document.getElementById('confettiContainer');
+    const colors = ['#f48fb1', '#f06292', '#ce93d8', '#ba68c8', '#ff8a65', '#fff176', '#81c784', '#64b5f6'];
+
+    for (let i = 0; i < 80; i++) {
+      setTimeout(() => {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.width = (5 + Math.random() * 10) + 'px';
+        piece.style.height = (5 + Math.random() * 10) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+        container.appendChild(piece);
+
+        setTimeout(() => piece.remove(), 5000);
+      }, i * 30);
+    }
+  }
+
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('dateInput').setAttribute('min', today);
+</script>
+
+</body>
+</html>
